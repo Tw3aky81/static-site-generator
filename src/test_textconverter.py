@@ -3,6 +3,9 @@ import unittest
 from textconverter import split_nodes_delimiter
 from textnode import TextNode, TextType
 
+""" Tests are not incorrect, but the solution uses assertListEqual.
+    TODO: rewrite with assertListEqual"""
+
 
 class TestTextConverter(unittest.TestCase):
     def test_bold_conversion(self):
@@ -108,3 +111,22 @@ class TestTextConverter(unittest.TestCase):
         self.assertTrue(isinstance(new_nodes[6], TextNode))
         self.assertEqual(new_nodes[6].text, " word")
         self.assertEqual(new_nodes[6].text_type, TextType.PLAIN)
+
+    def test__conversion_invalid_doc(self):
+        node = TextNode(
+            "This is a text with a `code block`, a **bold word and an _italic_ word",
+            TextType.PLAIN,
+        )
+        with self.assertRaises(ValueError):
+            split_nodes_delimiter([node], "**", TextType.BOLD)
+
+    def test__conversion_empty_tag(self):
+        node = TextNode("This is a text with a **** word", TextType.PLAIN)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+        self.assertTrue(isinstance(new_nodes, list))
+        self.assertTrue(isinstance(new_nodes[0], TextNode))
+        self.assertEqual(new_nodes[0].text, "This is a text with a ")
+        self.assertEqual(new_nodes[0].text_type, TextType.PLAIN)
+        self.assertTrue(isinstance(new_nodes[1], TextNode))
+        self.assertEqual(new_nodes[1].text, " word")
+        self.assertEqual(new_nodes[1].text_type, TextType.PLAIN)
