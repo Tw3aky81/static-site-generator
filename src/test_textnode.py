@@ -77,7 +77,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         )
 
     def test_text_to_html_raise_runtime_error(self):
-        node = TextNode("This is a faulty node", "video")
+        node = TextNode("This is a faulty node", "video")  # pyright: ignore[reportArgumentType]
         with self.assertRaises(RuntimeError):
             text_node_to_html_node(node)
 
