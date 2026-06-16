@@ -1,6 +1,10 @@
 import unittest
 
-from textconverter import split_nodes_delimiter
+from textconverter import (
+    extract_markdown_images,
+    extract_markdown_links,
+    split_nodes_delimiter,
+)
 from textnode import TextNode, TextType
 
 """ Tests are not incorrect, but the solution uses assertListEqual.
@@ -130,3 +134,47 @@ class TestTextConverter(unittest.TestCase):
         self.assertTrue(isinstance(new_nodes[1], TextNode))
         self.assertEqual(new_nodes[1].text, " word")
         self.assertEqual(new_nodes[1].text_type, TextType.PLAIN)
+
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
+    def test_extract_markdown_multiple_images(self):
+        matches = extract_markdown_images(
+            "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        )
+        self.assertListEqual(
+            [
+                ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+                ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg"),
+            ],
+            matches,
+        )
+
+    def test_extract_markdown_no_images(self):
+        matches = extract_markdown_images("This is text with no images")
+        self.assertListEqual([], matches)
+
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with a [link to boot.dev](https://www.boot.dev)"
+        )
+        self.assertListEqual([("link to boot.dev", "https://www.boot.dev")], matches)
+
+    def test_extract_markdown_multiple_links(self):
+        matches = extract_markdown_links(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        )
+        self.assertListEqual(
+            [
+                ("to boot dev", "https://www.boot.dev"),
+                ("to youtube", "https://www.youtube.com/@bootdotdev"),
+            ],
+            matches,
+        )
+
+    def test_extract_markdown_no_links(self):
+        matches = extract_markdown_links("This is text with no links")
+        self.assertListEqual([], matches)

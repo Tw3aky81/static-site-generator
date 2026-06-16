@@ -1,3 +1,5 @@
+import re
+
 from textnode import TextNode, TextType
 
 
@@ -24,6 +26,14 @@ def split_nodes_delimiter(
     return new_nodes
 
 
+def extract_markdown_images(text: str) -> list[tuple[str, str]]:
+    return re.findall(r"!\[(.+?)\]\((.+?)\)", text)
+
+
+def extract_markdown_links(text: str) -> list[tuple[str, str]]:
+    return re.findall(r"\[(.+?)\]\((.+?)\)", text)
+
+
 if __name__ == "__main__":
     node = TextNode(
         "This is a text with a `code block`, a **bold** word and an _italic_ word",
@@ -33,3 +43,13 @@ if __name__ == "__main__":
     new_nodes = split_nodes_delimiter([*new_nodes], "`", TextType.CODE)
     new_nodes = split_nodes_delimiter([*new_nodes], "**", TextType.BOLD)
     print(new_nodes)
+
+    images = extract_markdown_images(
+        "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+    )
+    print(images)
+
+    links = extract_markdown_links(
+        "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+    )
+    print(links)
