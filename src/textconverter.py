@@ -1,4 +1,5 @@
 import re
+from typing import Text
 
 from textnode import TextNode, TextType
 
@@ -40,19 +41,21 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
         if node.text_type != TextType.PLAIN:
             new_nodes.append(node)
             continue
+        text_to_split = node.text
         images = extract_markdown_images(node.text)
         if len(images) == 0:
             new_nodes.append(node)
             continue
-        split_nodes = []
-        text_to_split = node.text
         for image_alt, image_link in images:
             parts = text_to_split.split(f"![{image_alt}]({image_link})", maxsplit=1)
+            if len(parts) != 2:
+                raise ValueError("invalid markdown, image section not closed")
             if parts[0] != "":
-                split_nodes.append(TextNode(parts[0], TextType.PLAIN))
-            split_nodes.append(TextNode(image_alt, TextType.IMAGE, image_link))
+                new_nodes.append(TextNode(parts[0], TextType.PLAIN))
+            new_nodes.append(TextNode(image_alt, TextType.IMAGE, image_link))
             text_to_split = parts[1]
-        new_nodes.extend(split_nodes)
+        if text_to_split != "":
+            new_nodes.append(TextNode(text_to_split, TextType.PLAIN))
     return new_nodes
 
 
@@ -62,19 +65,21 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
         if node.text_type != TextType.PLAIN:
             new_nodes.append(node)
             continue
+        text_to_split = node.text
         links = extract_markdown_links(node.text)
         if len(links) == 0:
             new_nodes.append(node)
             continue
-        split_nodes = []
-        text_to_split = node.text
         for link_text, link_url in links:
             parts = text_to_split.split(f"[{link_text}]({link_url})", maxsplit=1)
+            if len(parts) != 2:
+                raise ValueError("invalid markdown, link section not closed")
             if parts[0] != "":
-                split_nodes.append(TextNode(parts[0], TextType.PLAIN))
-            split_nodes.append(TextNode(link_text, TextType.LINK, link_url))
+                new_nodes.append(TextNode(parts[0], TextType.PLAIN))
+            new_nodes.append(TextNode(link_text, TextType.LINK, link_url))
             text_to_split = parts[1]
-        new_nodes.extend(split_nodes)
+        if text_to_split != "":
+            new_nodes.append(TextNode(text_to_split, TextType.PLAIN))
     return new_nodes
 
 
