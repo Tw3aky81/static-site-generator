@@ -34,6 +34,50 @@ def extract_markdown_links(text: str) -> list[tuple[str, str]]:
     return re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
 
 
+def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes: list[TextNode] = []
+    for node in old_nodes:
+        if node.text_type != TextType.PLAIN:
+            new_nodes.append(node)
+            continue
+        images = extract_markdown_images(node.text)
+        if len(images) == 0:
+            new_nodes.append(node)
+            continue
+        split_nodes = []
+        text_to_split = node.text
+        for image_alt, image_link in images:
+            parts = text_to_split.split(f"![{image_alt}]({image_link})", maxsplit=1)
+            if parts[0] != "":
+                split_nodes.append(TextNode(parts[0], TextType.PLAIN))
+            split_nodes.append(TextNode(image_alt, TextType.IMAGE, image_link))
+            text_to_split = parts[1]
+        new_nodes.extend(split_nodes)
+    return new_nodes
+
+
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes: list[TextNode] = []
+    for node in old_nodes:
+        if node.text_type != TextType.PLAIN:
+            new_nodes.append(node)
+            continue
+        links = extract_markdown_links(node.text)
+        if len(links) == 0:
+            new_nodes.append(node)
+            continue
+        split_nodes = []
+        text_to_split = node.text
+        for link_text, link_url in links:
+            parts = text_to_split.split(f"[{link_text}]({link_url})", maxsplit=1)
+            if parts[0] != "":
+                split_nodes.append(TextNode(parts[0], TextType.PLAIN))
+            split_nodes.append(TextNode(link_text, TextType.LINK, link_url))
+            text_to_split = parts[1]
+        new_nodes.extend(split_nodes)
+    return new_nodes
+
+
 if __name__ == "__main__":
     node = TextNode(
         "This is a text with a `code block`, a **bold** word and an _italic_ word",
@@ -42,14 +86,37 @@ if __name__ == "__main__":
     new_nodes = split_nodes_delimiter([node], "_", TextType.ITALIC)
     new_nodes = split_nodes_delimiter([*new_nodes], "`", TextType.CODE)
     new_nodes = split_nodes_delimiter([*new_nodes], "**", TextType.BOLD)
+    print(f"Example output of 'split_nodes_delimiter' for {node}:")
     print(new_nodes)
+    print()
 
     images = extract_markdown_images(
         "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
     )
+    print("Example output of 'extract_markdown_images':")
     print(images)
+    print()
 
     links = extract_markdown_links(
         "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
     )
+    print("Example output of 'extract_markdown_links':")
     print(links)
+    print()
+
+    node = TextNode(
+        "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+        TextType.PLAIN,
+    )
+    new_nodes = split_nodes_image([node])
+    print(f"Example output of 'split_nodes_image' for {node}:")
+    print(new_nodes)
+    print()
+
+    node = TextNode(
+        "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+        TextType.PLAIN,
+    )
+    new_nodes = split_nodes_link([node])
+    print(f"Example output of 'split_nodes_link' for {node}:")
+    print(new_nodes)
