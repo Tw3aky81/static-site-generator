@@ -1,4 +1,3 @@
-from typing import Text
 import unittest
 
 from textconverter import (
