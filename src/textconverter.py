@@ -82,7 +82,23 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     return new_nodes
 
 
-if __name__ == "__main__":
+def text_to_textnodes(text: str) -> list[TextNode]:
+    try:
+        node = TextNode(text, TextType.PLAIN)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+        new_nodes = split_nodes_delimiter([*new_nodes], "_", TextType.ITALIC)
+        new_nodes = split_nodes_delimiter([*new_nodes], "`", TextType.CODE)
+        new_nodes = split_nodes_image([*new_nodes])
+        new_nodes = split_nodes_link([*new_nodes])
+    except ValueError as e:
+        raise ValueError(f"Could not parse markdown text: {e}")
+    except Exception as f:
+        raise Exception(f"An unexpected error occurred: {f}")
+
+    return new_nodes
+
+
+def main():
     node = TextNode(
         "This is a text with a `code block`, a **bold** word and an _italic_ word",
         TextType.PLAIN,
@@ -124,3 +140,7 @@ if __name__ == "__main__":
     new_nodes = split_nodes_link([node])
     print(f"Example output of 'split_nodes_link' for {node}:")
     print(new_nodes)
+
+
+if __name__ == "__main__":
+    main()
