@@ -3,6 +3,22 @@ import re
 from textnode import TextNode, TextType
 
 
+def text_to_textnodes(text: str) -> list[TextNode]:
+    try:
+        nodes = [TextNode(text, TextType.PLAIN)]
+        nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+        nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+        nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+        nodes = split_nodes_image(nodes)
+        nodes = split_nodes_link(nodes)
+    except ValueError as e:
+        raise ValueError(f"Could not parse markdown text: {e}")
+    except Exception as f:
+        raise Exception(f"An unexpected error occurred: {f}")
+
+    return nodes
+
+
 def split_nodes_delimiter(
     old_nodes: list[TextNode], delimiter: str, text_type: TextType
 ) -> list[TextNode]:
@@ -79,22 +95,6 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
             text_to_split = parts[1]
         if text_to_split != "":
             new_nodes.append(TextNode(text_to_split, TextType.PLAIN))
-    return new_nodes
-
-
-def text_to_textnodes(text: str) -> list[TextNode]:
-    try:
-        node = TextNode(text, TextType.PLAIN)
-        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
-        new_nodes = split_nodes_delimiter([*new_nodes], "_", TextType.ITALIC)
-        new_nodes = split_nodes_delimiter([*new_nodes], "`", TextType.CODE)
-        new_nodes = split_nodes_image([*new_nodes])
-        new_nodes = split_nodes_link([*new_nodes])
-    except ValueError as e:
-        raise ValueError(f"Could not parse markdown text: {e}")
-    except Exception as f:
-        raise Exception(f"An unexpected error occurred: {f}")
-
     return new_nodes
 
 
