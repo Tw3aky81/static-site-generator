@@ -10,11 +10,8 @@ from inline import (
 )
 from textnode import TextNode, TextType
 
-""" Tests are not incorrect, but the solution uses assertListEqual.
-    TODO: rewrite with assertListEqual"""
 
-
-class TestTextConverter(unittest.TestCase):
+class TestInline(unittest.TestCase):
     def test_bold_conversion(self):
         node = TextNode("This is a text with a **bold** word", TextType.PLAIN)
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
