@@ -23,6 +23,8 @@ def makdown_to_blocks(markdown: str) -> list[str]:
 
 # Lane did it with plain if else then and for loop logic.
 # I want to see how my regex solution turns out.
+#
+# I'm actually pulling a leg here, but it's currently to hot to code right now.
 def block_to_block_type(block: str) -> BlockType:
     if re.search(r"^#{1,6} .+$", block):
         return BlockType.HEADING_TYPE
