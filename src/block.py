@@ -1,6 +1,8 @@
 from enum import Enum
 import re
 
+from htmlnode import HTMLNode
+
 
 class BlockType(Enum):
     PARAGRAPH_TYPE = "paragraph"
@@ -23,8 +25,6 @@ def makdown_to_blocks(markdown: str) -> list[str]:
 
 # Lane did it with plain if else then and for loop logic.
 # I want to see how my regex solution turns out.
-#
-# I'm actually pulling a leg here, but it's currently to hot to code right now.
 def block_to_block_type(block: str) -> BlockType:
     if re.search(r"^#{1,6} .+$", block):
         return BlockType.HEADING_TYPE
@@ -37,3 +37,17 @@ def block_to_block_type(block: str) -> BlockType:
     if re.search(r"^\d\. .+$", block, re.MULTILINE):
         return BlockType.OL_TYPE
     return BlockType.PARAGRAPH_TYPE
+
+
+def markdown_to_html_node(markdown: str) -> HTMLNode:
+    # split the markdown into blocks
+
+    # loop over each block
+    # - determine block type
+    # - create HTMLNode based on block type
+    # - assign proper child HTMLNode objects to block node
+    # - separate logic for code blocks
+
+    # Make all the block nodes children under the single parent (div) and return
+
+    pass
