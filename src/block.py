@@ -49,5 +49,5 @@ def markdown_to_html_node(markdown: str) -> HTMLNode:
     # - separate logic for code blocks
 
     # Make all the block nodes children under the single parent (div) and return
-
-    pass
+    root = HTMLNode("div")
+    return root
