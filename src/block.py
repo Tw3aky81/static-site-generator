@@ -93,7 +93,9 @@ def create_quote_node(block: str) -> ParentNode:
 
 
 def create_ul_node(block: str) -> ParentNode:
-    children = text_to_children(block)
+    children = []
+    for item in block.split("\n"):
+        children.append(ParentNode("li", text_to_children(item[2:])))
     node = ParentNode("ul", children)
     return node
 
@@ -114,10 +116,9 @@ def create_code_node(block: str) -> ParentNode:
 
 if __name__ == "__main__":
     md = """
-```
-This is text that _should_ remain
-the **same** even with inline stuff
-```
+- List **bold item** 1
+- List _italic item_ 2
+- List item 3
 """
 
     node = markdown_to_html_node(md)
