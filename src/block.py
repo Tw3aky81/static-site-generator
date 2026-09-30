@@ -75,8 +75,12 @@ def text_to_children(text: str) -> list[HTMLNode]:
 
 
 def create_heading_node(block: str) -> ParentNode:
-    children = text_to_children(block)
-    node = ParentNode("h1", children)
+    count = 0
+    for c in block[:6]:
+        if c == "#":
+            count += 1
+    children = text_to_children(block[count + 1 :])
+    node = ParentNode(f"h{count}", children)
     return node
 
 
@@ -123,8 +127,12 @@ def create_code_node(block: str) -> ParentNode:
 
 if __name__ == "__main__":
     md = """
-> This is a **bold** quote block
-> By Francis _italic_ Engels
+# This is one **bold** heading
+
+## An _italic_ subheading
+
+###### Tiny section heading
+
 """
 
     node = markdown_to_html_node(md)
