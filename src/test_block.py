@@ -115,3 +115,26 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+
+    def test_heading(self):
+        md = """
+# Heading 1
+
+## Heading 2
+
+### Heading with **bold** reference
+
+#### Heading 4
+
+##### _Heading 5_
+
+###### Heading 6
+
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading with <b>bold</b> reference</h3><h4>Heading 4</h4><h5><i>Heading 5</i></h5><h6>Heading 6</h6></div>",
+        )
