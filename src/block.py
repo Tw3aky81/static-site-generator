@@ -118,7 +118,7 @@ def create_ol_node(block: str) -> ParentNode:
 
 
 def create_code_node(block: str) -> ParentNode:
-    text = repr(block.strip("```").strip()).strip("'").strip('"')
+    text = block.strip("```").lstrip()
     text_node = TextNode(text, TextType.CODE)
     children = text_node_to_html_node(text_node)
     node = ParentNode("pre", [children])
