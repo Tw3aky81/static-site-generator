@@ -87,7 +87,10 @@ def create_paragraph_node(block: str) -> ParentNode:
 
 
 def create_quote_node(block: str) -> ParentNode:
-    children = text_to_children(block)
+    quote = []
+    for line in block.split("\n"):
+        quote.append(line.lstrip("> "))
+    children = text_to_children("\n".join(quote))
     node = ParentNode("blockquote", children)
     return node
 
@@ -120,10 +123,8 @@ def create_code_node(block: str) -> ParentNode:
 
 if __name__ == "__main__":
     md = """
-1. List **bold item** 1
-2. List _italic item_ 2
-3. List item 3
-4. 1Password.
+> This is a **bold** quote block
+> By Francis _italic_ Engels
 """
 
     node = markdown_to_html_node(md)
