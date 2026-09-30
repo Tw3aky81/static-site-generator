@@ -95,13 +95,17 @@ def create_quote_node(block: str) -> ParentNode:
 def create_ul_node(block: str) -> ParentNode:
     children = []
     for item in block.split("\n"):
-        children.append(ParentNode("li", text_to_children(item[2:])))
+        children.append(ParentNode("li", text_to_children(item.lstrip(" -"))))
     node = ParentNode("ul", children)
     return node
 
 
 def create_ol_node(block: str) -> ParentNode:
-    children = text_to_children(block)
+    children = []
+    for item in block.split("\n"):
+        children.append(
+            ParentNode("li", text_to_children(re.sub(r"^( *[0-9]*. )", "", item)))
+        )
     node = ParentNode("ol", children)
     return node
 
@@ -116,9 +120,10 @@ def create_code_node(block: str) -> ParentNode:
 
 if __name__ == "__main__":
     md = """
-- List **bold item** 1
-- List _italic item_ 2
-- List item 3
+1. List **bold item** 1
+2. List _italic item_ 2
+3. List item 3
+4. 1Password.
 """
 
     node = markdown_to_html_node(md)
