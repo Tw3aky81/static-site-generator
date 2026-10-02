@@ -138,3 +138,44 @@ the **same** even with inline stuff
             html,
             "<div><h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading with <b>bold</b> reference</h3><h4>Heading 4</h4><h5><i>Heading 5</i></h5><h6>Heading 6</h6></div>",
         )
+
+    def test_blockquote(self):
+        md = """
+> This is a **block** quote
+> By _Francis Engels_
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><blockquote>This is a <b>block</b> quote\nBy <i>Francis Engels</i></blockquote></div>",
+        )
+
+    def test_unordered_list(self):
+        md = """
+- List **bold** item 1
+- List _italic_ item 2
+- List item 3
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ul><li>List <b>bold</b> item 1</li><li>List <i>italic</i> item 2</li><li>List item 3</li></ul></div>",
+        )
+
+    def test_ordered_list(self):
+        md = """
+1. List **bold** item 1
+2. List _italic_ item 2
+3. 1Password List item 3
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ol><li>List <b>bold</b> item 1</li><li>List <i>italic</i> item 2</li><li>1Password List item 3</li></ol></div>",
+        )
