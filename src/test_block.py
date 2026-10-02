@@ -179,3 +179,34 @@ the **same** even with inline stuff
             html,
             "<div><ol><li>List <b>bold</b> item 1</li><li>List <i>italic</i> item 2</li><li>1Password List item 3</li></ol></div>",
         )
+
+    def test_all_blocks(self):
+        md = """
+# Heading 1
+
+This is another paragraph with _italic_ text and `code` here
+
+1. List **bold** item 1
+2. List _italic_ item 2
+3. 1Password List item 3
+
+> This is a **block** quote
+> By _Francis Engels_
+
+- List **bold** item 1
+- List _italic_ item 2
+- List item 3
+
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.maxDiff = None
+        self.assertEqual(
+            html,
+            "<div><h1>Heading 1</h1><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p><ol><li>List <b>bold</b> item 1</li><li>List <i>italic</i> item 2</li><li>1Password List item 3</li></ol><blockquote>This is a <b>block</b> quote\nBy <i>Francis Engels</i></blockquote><ul><li>List <b>bold</b> item 1</li><li>List <i>italic</i> item 2</li><li>List item 3</li></ul><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+        )
