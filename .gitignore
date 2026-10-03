@@ -1,5 +1,4 @@
 # Project specific ignores
-public/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
