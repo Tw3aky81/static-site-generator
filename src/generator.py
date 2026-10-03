@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from block import markdown_to_html_node
 
@@ -13,7 +14,7 @@ def extract_title(markdown: str) -> str:
     raise ValueError("Error: Markdown contains no h1 header")
 
 
-def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
+def generate_page(from_path: str, template_path: str, dest_path: str | Path) -> None:
     print(f" * {from_path} {template_path} -> {dest_path}")
 
     content = open(from_path, "r")
@@ -41,13 +42,11 @@ def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
 def generate_pages_recursive(
     dir_path_content: str, template_path: str, dest_dir_path: str
 ) -> None:
-    filenames = os.listdir(dir_path_content)
-    for filename in filenames:
+    for filename in os.listdir(dir_path_content):
         from_filepath = os.path.join(dir_path_content, filename)
         to_filepath = os.path.join(dest_dir_path, filename)
         if os.path.isfile(from_filepath) and from_filepath.endswith(".md"):
-            html_filename = filename.replace(".md", ".html")
-            to_filepath = os.path.join(dest_dir_path, html_filename)
+            to_filepath = Path(to_filepath).with_suffix(".html")
             generate_page(from_filepath, template_path, to_filepath)
         else:
             generate_pages_recursive(from_filepath, template_path, to_filepath)
